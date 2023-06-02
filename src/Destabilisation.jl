@@ -1,6 +1,10 @@
 module Destabilisation
 
+export slice_traj
 export Y
+export Z_t
+export Id
+export J
 
 export check_traj
 

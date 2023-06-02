@@ -8,7 +8,3 @@ Documentation for [Destabilisation](https://github.com/DanielJonathanPals/Destab
 
 ```@index
 ```
-
-```@autodocs
-Modules = [Destabilisation]
-```
