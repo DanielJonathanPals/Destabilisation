@@ -2,5 +2,6 @@ using Destabilisation
 using Test
 
 @testset "Destabilisation.jl" begin
-    # Write your tests here.
+    include("FormatTests.jl")
+    include("Matrices.jl")
 end

@@ -1,5 +1,10 @@
 module Destabilisation
 
-# Write your package code here.
+export Y
+
+export check_traj
+
+include("FormatTests.jl")
+include("Matrices.jl")
 
 end
