@@ -1,4 +1,4 @@
-@testset "FormatTests.jl" begin
+@testset "Matracies.jl" begin
 
     @test slice_traj(ones(2, 20), T=10, p=1) == ones(Float64, 2, 11)
     @test_throws ErrorException slice_traj(ones(2, 20))
