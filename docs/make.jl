@@ -18,6 +18,7 @@ makedocs(;
         "Index" => "index.md",
         "Format Test" => "formatTests.md",
         "Matrices" => "matrices.md",
+        "Coupling to dynamical system" => "coupling.md",
     ],
 )
 

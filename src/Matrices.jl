@@ -32,7 +32,6 @@ This function turns a trajectory `traj`, which is a matrix with K rows into a ma
     consists of all the presamples plus all the actual samples. If on the other hand `T` is given
     and `T+p` is not equal to the length of the trajectory, i.e. `traj` has less than `T+p` columns,
     an error is throuwn.
-
     As always `p` denotes the number of presamples and `T` encodes the number of actual samples. 
 """
 function Y(traj::Matrix; p::Int64=1, T::Union{Int64,Nothing}=nothing)
@@ -52,7 +51,6 @@ end
 Returns the vector Zₜ as defined e.g. in equation (3.2.1) in Lütkepohls book. Here it is assumed
     that the trajectory `traj` includes the presample datapoints i.e. yₜ from the book corresponds
     to the column of `traj` with index `t+p`.
-
     As always `p` denotes the number of presamples.
 """
 function Z_t(traj::Matrix, t; p::Int64=1)
@@ -74,9 +72,8 @@ end
     Z(traj; p::Int64=1, T::Union{Int64,Nothing}=nothing)
 
 Returns Z as defined in Lütkepohls book in equation (3.2.1). If the number of columns of
-the trajectory `traj` does not equal T+p then an error is throuwn. 
-
-As always `p` denotes the number of presamples and `T` encodes the number of actual samples. 
+    the trajectory `traj` does not equal T+p then an error is throuwn. 
+    As always `p` denotes the number of presamples and `T` encodes the number of actual samples. 
 """
 function Z(traj; p::Int64=1, T::Union{Int64,Nothing}=nothing)
     check_traj(traj)

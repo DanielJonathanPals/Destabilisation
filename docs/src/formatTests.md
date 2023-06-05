@@ -8,4 +8,5 @@ These functions can be used to verify if a given object has indeed the desired f
 
 ```@docs
 check_traj
+check_DynamicalSystem
 ```

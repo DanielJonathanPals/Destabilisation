@@ -8,8 +8,12 @@ export Id
 export J
 
 export check_traj
+export check_DynamicalSystem
+
+export DynamicalSystem
 
 include("FormatTests.jl")
 include("Matrices.jl")
+include("Coupling.jl")
 
 end
