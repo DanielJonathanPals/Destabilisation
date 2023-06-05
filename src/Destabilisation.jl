@@ -12,8 +12,10 @@ export check_DynamicalSystem
 
 export DynamicalSystem
 
+export integrateTraj
+
 include("FormatTests.jl")
 include("Matrices.jl")
-include("Coupling.jl")
+include("Integrate.jl")
 
 end
