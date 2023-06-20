@@ -19,6 +19,8 @@ makedocs(;
         "Format Test" => "formatTests.md",
         "Matrices" => "matrices.md",
         "Coupling to dynamical system" => "coupling.md",
+        "Integrate trajectories" => "integrate.md",
+        "Fit VAR model" => "fitVARmodel.md",
     ],
 )
 

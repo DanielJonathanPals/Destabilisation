@@ -1,3 +1,5 @@
+using Kronecker
+
 @testset "FormatTests.jl" begin
     
     @test_throws ErrorException check_traj([1,2,3])
@@ -29,4 +31,13 @@
     @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> x[1]+p[1], [1.,3.], [0.], nothing)
     @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(-1.,2.),(-3.,5.)])
     @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(1.,2.)])
+
+    @test check_h((x,p) -> reshape(Array(x ⊗  p), length(x ⊗  p)), ones(3,10), ones(2,10)) === nothing
+    @test check_h((x) -> [x[1]], ones(3,10), nothing) === nothing
+
+    @test_throws ErrorException check_h((x) -> x, ones(3,10), ones(2,10))
+    @test_throws ErrorException check_h((x,p) -> x[1]+p[1], ones(3,10), ones(2,10))
+    @test_throws ErrorException check_h((x) -> x, ones(3,10), ones(2,10))
+    @test_throws ErrorException check_h((x,p) -> x.*p[1], ones(3,10), nothing)
+    @test_throws ErrorException check_h((x) -> x[1], ones(3,10), nothing)
 end

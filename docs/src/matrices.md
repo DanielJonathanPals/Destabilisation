@@ -8,9 +8,10 @@ Here some usefull functions are presented which return matrices which are for in
 
 ```@docs
 slice_traj
+X
+Y_t
 Y
-Z_t
-Z
 Id
 J
+create_y_traj
 ```
