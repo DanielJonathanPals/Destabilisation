@@ -16,6 +16,9 @@ export DynamicalSystem
 
 export integrateTraj
 
+export VARmodel
+export VARorder
+
 include("FormatTests.jl")
 include("FitVARmodel.jl")
 include("Integrate.jl")

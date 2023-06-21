@@ -17,5 +17,8 @@ VARorder
 
 After selecting a suitable order the VAR model can be fitted to the data using the function:
 ```@docs
-VARmodel
+VARmodel(x_traj::Matrix;
+    p_traj::Union{Matrix,Nothing}=nothing,
+    h::Union{Function,Nothing}=nothing,
+    p::Int64=1)
 ```

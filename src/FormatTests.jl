@@ -133,7 +133,7 @@ Compatibility test for the function h used for the inclusion of non-linearities 
     to be given by a `Vector{Float64}` valued function which takes one or two vector arguments, depending on whether
     a timeseries of parameters is included or not.
 """
-function check_h(h::Function, x_traj::Union{Matrix{Float64},Nothing}, p_traj::Union{Matrix{Float64},Nothing})
+function check_h(h::Function, x_traj::Matrix{Float64}, p_traj::Union{Matrix{Float64},Nothing})
     if p_traj !== nothing
         try
             h(x_traj[:,1], p_traj[:,1])

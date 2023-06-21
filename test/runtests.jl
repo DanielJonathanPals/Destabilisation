@@ -5,4 +5,5 @@ using Test
     include("FormatTests.jl")
     include("Matrices.jl")
     include("Integrate.jl")
+    include("FitVARmodel.jl")
 end
