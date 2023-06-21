@@ -10,4 +10,5 @@ These functions can be used to verify if a given object has indeed the desired f
 check_traj
 check_DynamicalSystem
 check_h
+check_xph
 ```

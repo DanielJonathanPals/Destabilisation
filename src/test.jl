@@ -15,8 +15,8 @@ v_tr, p_tr, x_tr = integrateTraj(DS,g,101,v_init,p_init)
 h(x,p) = x[1] .* p
 
 
-x = zeros(1,23)
-for i in 4:13
+x = zeros(1,103)
+for i in 4:103
     x[1,i] = 0.5*x[1,i-1] + 0.01*x[1,i-2] + 0.3*x[1,i-3] + 0.002*randn()
 end
 

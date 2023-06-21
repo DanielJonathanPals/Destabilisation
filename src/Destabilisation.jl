@@ -11,6 +11,7 @@ export create_y_traj
 export check_traj
 export check_DynamicalSystem
 export check_h
+export check_xph
 
 export DynamicalSystem
 

@@ -5,6 +5,7 @@ module FormatTests
 export check_traj
 export check_DynamicalSystem
 export check_h
+export check_xph
 
 
 """
@@ -157,6 +158,41 @@ function check_h(h::Function, x_traj::Matrix{Float64}, p_traj::Union{Matrix{Floa
     end
 end
 
+
+"""
+    check_xph(x_traj::Matrix,p_traj::Union{Matrix,Nothing}=nothing,h::Union{Function,Nothing}=nothing)
+
+Compatibility test for simultaneously checking the trajectory `x_traj`, the parameter trajectory `p_traj` and 
+    the function `h`. `x_traj`, `p_traj` and `h` are supposed to satify their individual compatibility tests 
+    and in addition, the number of datapoints in `x_traj` and `p_traj` must be the same. 
+    Besides checking the compatibility of `x_traj`, `p_traj` and `h`, the function also returns the dimensions
+    of the trajectory `x_traj`, the parameter trajectory `p_traj` and the output of `h` at the first datapoint 
+    as `d_x`, `d_p` and `d_h`, respectively.
+"""
+function check_xph(x_traj::Matrix;p_traj::Union{Matrix,Nothing}=nothing,h::Union{Function,Nothing}=nothing)
+    check_traj(x_traj)
+    d_x = size(x_traj,1)
+    if p_traj !== nothing
+        check_traj(p_traj)
+        d_p = size(p_traj,1)
+        if size(x_traj,2) != size(p_traj,2)
+            error("The number of datapoints in the trajectory `traj` and the parameter trajectory `p_traj` must be the same")
+        end
+    else
+        d_p = 0
+    end
+    if h !== nothing
+        check_h(h,x_traj,p_traj)
+        if p_traj === nothing
+            d_h = size(h(x_traj[:,1]),1)
+        else
+            d_h = size(h(x_traj[:,1],p_traj[:,1]),1)
+        end
+    else
+        d_h = 0
+    end
+    return d_x,d_p,d_h
+end
 
 
 end

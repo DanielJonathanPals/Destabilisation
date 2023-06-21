@@ -40,4 +40,11 @@ using Kronecker
     @test_throws ErrorException check_h((x) -> x, ones(3,10), ones(2,10))
     @test_throws ErrorException check_h((x,p) -> x.*p[1], ones(3,10), nothing)
     @test_throws ErrorException check_h((x) -> x[1], ones(3,10), nothing)
+
+    @test check_xph(ones(3,10), p_traj = ones(2,10), h = (x,p) -> reshape(Array(x ⊗  p), length(x ⊗  p))) === (3,2,6)
+    @test check_xph(ones(3,10), p_traj = ones(2,10)) === (3,2,0)
+    @test check_xph(ones(3,10)) === (3,0,0)
+    @test check_xph(ones(3,10), h = x-> ones(10)) === (3,0,10)
+
+    @test_throws ErrorException check_xph(ones(3,10), p_traj = ones(2,9), h = (x,p) -> ones(3))
 end
