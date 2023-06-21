@@ -7,6 +7,7 @@
 An element of the struct VARmodel contains all the information needed to define a VAR model.
 
 # Fields
+- `h::Union{Function,Nothing}`: function that computes the regressor of the form `(x_t',p_t',h(x_t,p_t)')'`
 - `p::Int64`: order of the VAR model
 - `d_x::Int64`: dimension of the observable variable
 - `d_p::Int64`: dimension of the parameter variable
@@ -20,6 +21,7 @@ An element of the struct VARmodel contains all the information needed to define 
 - `Σ_x1_hat::Matrix{Float64}`: estimated MSE matrix of the one step forecast (unbiased estimator)
 """
 struct VARmodel
+    h::Union{Function,Nothing}      # is needed to compute the regressor of the form `(x_t',p_t',h(x_t,p_t)')'`
     p::Int64                        # order of the VAR model
     d_x::Int64                      # dimension of the observable variable
     d_p::Int64                      # dimension of the parameter variable

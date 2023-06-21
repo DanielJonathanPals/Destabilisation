@@ -100,7 +100,7 @@ function VARmodel(x_traj::Matrix;
     Σ_β_hat = Matrix(Γ_hat^(-1) ⊗ Σ_hat_u) / T
     Σ_x1_hat = (T + d_y * p + 1) / T * Σ_hat_u
 
-    return VARmodel(p,d_x,d_p,d_h,d_y,B_hat,Σ_hat_u,Σ_tilde_u,Σ_β_hat,Γ_hat,Σ_x1_hat)
+    return VARmodel(h,p,d_x,d_p,d_h,d_y,B_hat,Σ_hat_u,Σ_tilde_u,Σ_β_hat,Γ_hat,Σ_x1_hat)
 end
 
 
