@@ -6,6 +6,8 @@ export Y_t
 export Y
 export Id
 export J
+export F_i
+export F
 export create_y_traj
 
 export check_traj
@@ -17,11 +19,18 @@ export DynamicalSystem
 
 export integrateTraj
 
-export VARmodel
+export fitVARmodel
 export VARorder
+export testPredictions
+
+export VARmodel
+export oneStepPred
+
+export testPredictions
+export LMtest
 
 include("FormatTests.jl")
-include("FitVARmodel.jl")
+include("TestVARmodel.jl")
 include("Integrate.jl")
 
 end

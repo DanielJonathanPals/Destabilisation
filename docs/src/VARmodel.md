@@ -2,7 +2,7 @@
 CurrentModule = Destabilisation
 ```
 
-# Fitting a VAR model to observed data
+# VAR models
 
 The VAR model we use in this case is of the following form:
 $x_t = ν + A_1 (x_traj_{t-1}', p_traj_{t-1}', h(x_traj_{t-1}, p_traj_{t-1})')'
@@ -10,12 +10,12 @@ $x_t = ν + A_1 (x_traj_{t-1}', p_traj_{t-1}', h(x_traj_{t-1}, p_traj_{t-1})')'
 
 where $x_traj_t$ is the trajectory of the observables at time $t$, $p_traj_t$ is the trajectory of the parameters at time $t$ and $h$ is a function that allows for non-linearities in the model.
 
-A suitable order $p$ for the VAR model can be determined using the function:
+All relevant information about the VAR model is stored in the struct:
 ```@docs
-VARorder
+VARmodel
 ```
 
-After selecting a suitable order the VAR model can be fitted to the data using the function:
+The following function can be used to predict the next observable values given a VAR model and the current values of the observables and parameters:
 ```@docs
-fitVARmodel
+oneStepPred
 ```

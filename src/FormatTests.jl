@@ -169,7 +169,7 @@ Compatibility test for simultaneously checking the trajectory `x_traj`, the para
     of the trajectory `x_traj`, the parameter trajectory `p_traj` and the output of `h` at the first datapoint 
     as `d_x`, `d_p` and `d_h`, respectively.
 """
-function check_xph(x_traj::Matrix;p_traj::Union{Matrix,Nothing}=nothing,h::Union{Function,Nothing}=nothing)
+function check_xph(x_traj::Matrix,p_traj::Union{Matrix,Nothing},h::Union{Function,Nothing})
     check_traj(x_traj)
     d_x = size(x_traj,1)
     if p_traj !== nothing

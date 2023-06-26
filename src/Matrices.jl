@@ -111,6 +111,35 @@ end
 
 
 """
+    F_i(i::Int64, T::Int64)
+
+Returns the matrix Fᵢ as defined in equation (4.4.2)
+"""
+function F_i(i::Int64, T::Int64)
+    arr = spzeros(T,T)
+    arr[i+1:end,1:T-i] = Id(T-i)
+    return arr
+end
+
+
+"""
+    F(h::Int64, T::Int64)
+
+Returns the matrix Fᵢ as defined in equation (4.4.2)
+"""
+function F(h::Int64,T::Int64)
+    if h > T-1
+        error("The argument `h` must be smaller than T-1")
+    end
+    arr = spzeros(T,T*h)
+    for i in 0:h-1
+        arr[:,i*T+1:(i+1)*T] = F_i(i+1,T)
+    end
+    return arr
+end
+
+
+"""
     create_y_traj(x_traj::Matrix{Float64};p_traj::Union{Matrix{Float64},Nothing}=nothing,h::Union{Function,Nothing}=nothing)
 
 This function creates a trajectory `y_traj` from `x_traj`, `p_traj` and `h` s.t. the i-th column of `y_traj` is given by

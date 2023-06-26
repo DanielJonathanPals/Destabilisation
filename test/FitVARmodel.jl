@@ -8,12 +8,12 @@ using Random
     p_tr = [0.0  -0.002317  -0.00227054  -0.000575291  0.000360702  0.00195049  0.00158475  0.000323396  0.00206192  -0.000745936  0.00197454
             0.9   0.901549   0.902012     0.900167     0.902006     0.897626    0.901026    0.900232     0.896804     0.900162     0.90211]
     h(x,p) = x[1] .* p
-    model = VARmodel(x_tr,p_traj=p_tr,h=h,p=1)
-    model2 = VARmodel(x_tr,p_traj=p_tr)
+    model = fitVARmodel(x_tr,p_traj=p_tr,h=h,p=1)
+    model2 = fitVARmodel(x_tr,p_traj=p_tr)
 
     h2(x) = x.^2
-    model3 = VARmodel(x_tr,h=h2)
-    model4 = VARmodel(x_tr)
+    model3 = fitVARmodel(x_tr,h=h2)
+    model4 = fitVARmodel(x_tr)
 
     Random.seed!(3)
     x = zeros(1,103)
@@ -44,8 +44,8 @@ using Random
                             -0.00113679   6.09254e-6   -3.37771e-7  -0.00102389   8.50793e-10   5.48545e-6] atol=1e-4
     @test model.Σ_x1_hat ≈ reshape([1.4419339367786697e-17],1,1) atol=1e-4
 
-    @test_throws ErrorException VARmodel(x_tr,p_traj=p_tr[:,1:end-1],h=h,p=1)
-    @test_throws ErrorException VARmodel(x_tr,p_traj=p_tr,h=h,p=0)
+    @test_throws ErrorException fitVARmodel(x_tr,p_traj=p_tr[:,1:end-1],h=h,p=1)
+    @test_throws ErrorException fitVARmodel(x_tr,p_traj=p_tr,h=h,p=0)
 
     @test model2.B_hat ≈ [0.00182334  0.899947  0.99925  -0.00202657] atol=1e-4
 

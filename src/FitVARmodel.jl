@@ -2,8 +2,7 @@
 
 using .FormatTests
 using Kronecker
-
-include("Matrices.jl")   
+  
 include("VARmodel.jl")
 
 
@@ -28,7 +27,7 @@ function VARorder(x_traj::Matrix;
                     criterion::String="AIC")
 
     # check the input
-    d_x,_,_ = check_xph(x_traj,p_traj=p_traj,h=h)
+    d_x,_,_ = check_xph(x_traj,p_traj,h)
     if p_max < 1
         error("The maximal order `p_max` must be at least 1")
     end
@@ -40,7 +39,7 @@ function VARorder(x_traj::Matrix;
     l = zeros(p_max)
     T = size(x_traj,2)
     for p in 1:p_max
-        model = VARmodel(x_traj, p_traj=p_traj, h=h, p=p)
+        model = fitVARmodel(x_traj, p_traj=p_traj, h=h, p=p)
         d_y = model.d_y
         if criterion == "AIC"
             l[p] = log(det(model.Σ_tilde_u)) + 2*p*d_x*d_y/T
@@ -63,19 +62,19 @@ end
 
 
 """
-    VARmodel(x_traj::Matrix; p_traj::Union{Matrix,Nothing}=nothing, h::Union(Function,Nothing)=nothing, p::Int64=1)
+    fitVARmodel(x_traj::Matrix; p_traj::Union{Matrix,Nothing}=nothing, h::Union(Function,Nothing)=nothing, p::Int64=1)
 
 Fits a VAR(p) model of the form `x_traj_t = ν + A_1 (x_traj_{t-1}', p_traj_{t-1}', h(x_traj_{t-1}, p_traj_{t-1})')'
     + ... + A_p (x_traj_{t-p}', p_traj_{t-p}', h(x_traj_{t-p}, p_traj_{t-p})')'` to the given input data. It returns
     a `VARmodel` object which contains the estimated parameters and the estimated covariance matrices.
 """
-function VARmodel(x_traj::Matrix;
+function fitVARmodel(x_traj::Matrix;
     p_traj::Union{Matrix,Nothing}=nothing,
     h::Union{Function,Nothing}=nothing,
     p::Int64=1)
 
     # check input data
-    d_x,d_p,d_h = check_xph(x_traj,p_traj=p_traj,h=h)
+    d_x,d_p,d_h = check_xph(x_traj,p_traj,h)
     if p < 1
         error("The order of the VAR model must be at least 1")
     end
@@ -101,22 +100,4 @@ function VARmodel(x_traj::Matrix;
     Σ_x1_hat = (T + d_y * p + 1) / T * Σ_hat_u
 
     return VARmodel(h,p,d_x,d_p,d_h,d_y,B_hat,Σ_hat_u,Σ_tilde_u,Σ_β_hat,Γ_hat,Σ_x1_hat)
-end
-
-
-function testPredictions(model,x_traj::Matrix;p_traj::Union{Matrix,Nothing}=nothing,h::Union{Function,Nothing}=nothing)
-    # check input data
-    d_x,d_p,d_h = check_xph(x_traj,p_traj=p_traj,h=h)
-    if (d_x, d_p, d_h) != (model.d_x, model.d_p, model.d_h)
-        error("The dimensions of the input data do not match the dimensions of the model")
-    end
-    if size(x_traj,2) <= model.p
-        error("The trajectory must contain more than `p`=$(model.p) datapoints")
-    end
-    
-    x_traj = convert(Matrix{Float64}, x_traj) 
-    (p_traj === nothing) || (p_traj = convert(Matrix{Float64}, p_traj))
-
-    # Create y_traj from x_traj, p_traj and h
-    y_traj = create_y_traj(x_traj,p_traj=p_traj,h=h)
 end

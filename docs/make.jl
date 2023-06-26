@@ -21,6 +21,8 @@ makedocs(;
         "Coupling to dynamical system" => "coupling.md",
         "Integrate trajectories" => "integrate.md",
         "Fit VAR model" => "fitVARmodel.md",
+        "VAR model" => "VARmodel.md",
+        "Test VAR model" => "testVARmodel.md",
     ],
 )
 
