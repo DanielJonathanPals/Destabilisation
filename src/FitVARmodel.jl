@@ -2,8 +2,7 @@
 
 using .FormatTests
 using Kronecker
-  
-include("VARmodel.jl")
+using .VARmodel_module
 
 
 """

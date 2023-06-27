@@ -1,6 +1,6 @@
 using Random
 
-@testset "FitVARmodel.jl" begin
+@testset "Fit VAR model" begin
 
     p_init = [0.,0.9]
     g(p) = p_init*0.1 + 0.9*p + 0.002*randn(2)

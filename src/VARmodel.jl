@@ -1,5 +1,11 @@
 # An element of the struct VARmodel contains all the information needed to define a VAR model
 
+module VARmodel_module
+
+export VARmodel
+export oneStepPred
+
+include("FormatTests.jl")
 include("Matrices.jl")
 
 """
@@ -108,4 +114,6 @@ function oneStepPred(model::VARmodel,x_traj::Matrix;p_traj::Union{Matrix,Nothing
 
     # Compute the one step prediction
     return model.B_hat*Y(y_traj[:,end-model.p:end],p=model.p,T=1)
+end
+
 end

@@ -1,6 +1,6 @@
 using Kronecker
 
-@testset "FormatTests.jl" begin
+@testset "Format Tests" begin
     
     @test_throws ErrorException check_traj([1,2,3])
     @test_throws ErrorException check_traj(1.0)

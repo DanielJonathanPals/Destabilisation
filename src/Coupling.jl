@@ -11,8 +11,8 @@ An instance of the struct `DynamicalSystem` contains all the relevant informatio
 
 # Fields
 - `progressor::Function`: The Argument `progressor` should contains a function that takes two arguments, each of type
-    `Vector{Flaot64}`, representing the current state variables v and the current parameter values p and returns
-    the state variables as a `Vector{Flaot64}` for the next timestep. I.e. this function describes the progression
+    `Vector{Float64}`, representing the current state variables v and the current parameter values `p` and returns
+    the state variables for the next timestep as a `Vector{Float64}`. I.e. this function describes the progression
     of the dynamical system for one time step
 - `observable::Function`: This function should take the current state variables v and the current parameter values p,
     both as `Vector{Float64}`, as input and return an output of type `Vector{Float64}` containing all the observables

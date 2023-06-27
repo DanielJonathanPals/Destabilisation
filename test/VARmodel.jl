@@ -1,7 +1,7 @@
 using Random
 using Kronecker
 
-@testset "VARmodel.jl" begin
+@testset "VAR model" begin
 
     B_hat = [-7.87301e-10  -4.91341e-8  1.0  8.67039e-10  2.82692e-8  1.0]
     Σ_hat_u = reshape([1.0728884458060339e-20],1,1)

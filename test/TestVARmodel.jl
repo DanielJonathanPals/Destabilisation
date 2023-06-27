@@ -1,6 +1,6 @@
 using Random
 
-@testset "TestVARmodel.jl" begin
+@testset "Test VAR model" begin
 
     Random.seed!(123)
     prog(v,p) = [p[1] + p[2]*v[1] + 1e-10*randn()]

@@ -1,4 +1,4 @@
-@testset "Integrate.jl" begin
+@testset "Integrate" begin
 
     prog(v,p) = v + 0.01*(p[1].*(v-[p[2],p[3]]))
     obs(v,p) = [v[1] + v[2]]

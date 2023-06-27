@@ -23,6 +23,7 @@ makedocs(;
         "Fit VAR model" => "fitVARmodel.md",
         "VAR model" => "VARmodel.md",
         "Test VAR model" => "testVARmodel.md",
+        "Time scales" => "timeScales.md",
     ],
 )
 
