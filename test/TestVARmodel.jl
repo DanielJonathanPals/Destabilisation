@@ -12,7 +12,7 @@ using Random
 
     g(p) = p_init*0.1 + 0.9*p + 0.002*randn(2)
 
-    v, p, x = integrateTraj(DS,g,110,v_init,p_init)
+    v, p, x = integrateTraj(DS,g,110)
     x_train = x[:,1:100]
     x_test = x[:,101:end]
     p_train = p[:,1:100]

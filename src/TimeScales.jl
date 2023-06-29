@@ -5,8 +5,6 @@ using .VARmodel_module
 using LinearAlgebra
 using Polynomials
 
-include("Integrate.jl")
-
 """
     toPolynomial(f::Function; deg::Int64 = 1, tolerance::Float64 = 1e-4)
 
