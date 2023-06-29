@@ -24,6 +24,8 @@ makedocs(;
         "VAR model" => "VARmodel.md",
         "Test VAR model" => "testVARmodel.md",
         "Time scales" => "timeScales.md",
+        "Parameter series" => "parameterSeries.md",
+        "Test parameter dependence" => "testParameterDependences.md",
     ],
 )
 

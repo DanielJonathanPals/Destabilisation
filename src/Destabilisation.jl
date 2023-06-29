@@ -8,6 +8,7 @@ export Id
 export J
 export F_i
 export F
+export C
 export create_y_traj
 
 export check_traj
@@ -32,11 +33,13 @@ export LMtest
 export timeScale
 export toPolynomial
 
+export parameterSeriesGenerator
+
+export getParamLocations
+export testParamCausality
+
 include("FormatTests.jl")
 include("VARmodel.jl")
-include("TestVARmodel.jl")
-include("Integrate.jl")
-include("Matrices.jl")
-include("TimeScales.jl")
+include("ParameterCalibration.jl")
 
 end

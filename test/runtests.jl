@@ -9,4 +9,5 @@ using Test
     include("TestVARmodel.jl")
     include("VARmodel.jl")
     include("TimeScales.jl")
+    include("ParameterSeries.jl")
 end

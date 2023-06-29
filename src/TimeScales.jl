@@ -5,6 +5,7 @@ using .VARmodel_module
 using LinearAlgebra
 using Polynomials
 
+include("Integrate.jl")
 
 """
     toPolynomial(f::Function; deg::Int64 = 1, tolerance::Float64 = 1e-4)
@@ -91,4 +92,9 @@ function timeScale(model::VARmodel)
     rts = roots(poly)
 
     return min(abs.(rts)...)
+end
+
+
+function timeScale(DS::DynamicalSystem; T_init::Int64=200)
+    
 end

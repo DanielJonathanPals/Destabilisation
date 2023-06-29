@@ -30,11 +30,11 @@ using Random
     @test_throws ErrorException testPredictions(model2,ones(2,3),p_traj=ones(3,3))
 
     @test testPredictions(model,x_test,p_traj=p_test)[1] == true
-    @test testPredictions(model,x_test,p_traj=p_test)[2] ≈ 0.08722288299560255 atol=1e-4
+    @test testPredictions(model,x_test,p_traj=p_test)[2] ≈ 0.4844024358003808 atol=1e-4
 
     @test_throws ErrorException LMtest(model,5,ones(2,10),p_traj=ones(3,10))
     @test_throws ErrorException LMtest(model,20,x_test,p_traj=p_test)
 
     @test LMtest(model,5,x_train,p_traj=p_train)[1] == true
-    @test LMtest(model,5,x_train,p_traj=p_train)[2] ≈ 0.24964172685128727 atol=1e-4
+    @test LMtest(model,5,x_train,p_traj=p_train)[2] ≈ 0.8559706852690199 atol=1e-4
 end

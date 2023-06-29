@@ -4,19 +4,21 @@ using GLMakie
 prog(v,p) = [p[1] + p[2]*v[1] + 1e-4*randn()]
 obs(v,p) = v
 v_init = [0.]
-p_init = [0.,0.9]
+p_init = [0.,0.99]
 
 DS = DynamicalSystem(prog,obs,v_init,p_init)
 
-#g(p) = p_init*0.1 + 0.9*p + 0.002*randn(2)
-g(p) = p
+g(p) = p_init*0.1 + 0.9*p + 0.002 .*randn(2)
+#g(p) = p
 
+#v_tr, p_tr, x_tr = integrateTraj(DS,g,101,v_init,p_init)
 #v_tr, p_tr, x_tr = integrateTraj(DS,g,1001,v_init,p_init)
-v_tr, p_tr, x_tr = integrateTraj(DS,g,1001,v_init,p_init)
+v_tr, p_tr, x_tr = integrateTraj(DS,101,v_init,p_init)
 
-#h(x,p) = x[1] .* p
+h(x,p) = x[1] .* p
 
 #model = fitVARmodel(v_tr,p_traj=p_tr,h=h,p=1)
+#testParamCausality(model,1,101)
 model = fitVARmodel(v_tr,p=1)
 timeScale(model)
 

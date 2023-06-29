@@ -27,7 +27,7 @@ An instance of the struct `DynamicalSystem` contains all the relevant informatio
 - `p_length::Int64`: Number of parameters
 - `x_length::Int64`: Number of observables
 """
-struct DynamicalSystem
+mutable struct DynamicalSystem
     progressor::Function
     observable::Function
     v_init::Vector{Float64}

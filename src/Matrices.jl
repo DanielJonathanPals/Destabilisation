@@ -140,6 +140,33 @@ end
 
 
 """
+    C(param_locations::Vector{Int64}, d_x::Int64, d_y::Int64, p::Int64)
+
+C is the matrix as defined in section 3.6.1 in Lütkepohls book. It can be used to test if the observables in the 
+    fitted VAR model show a dependence on a given parameter p. To this end the positions of the p dependent entries
+    of y = (x',p',h(x,p)')' must be known and encoded in the `param_locations` argument. The argument `d_x` denotes
+    the dimension of the x vector, `d_y` the dimension of the y vector and `p` the number of presamples. The function
+    then returns the respective matrix C of dimentions `length(param_locations) × d_x * (p * d_y + 1)` as a sparse matrix.
+"""
+function C(param_locations::Vector{Int64}, d_x::Int64, d_y::Int64, p::Int64)
+
+    # check that the param_locations are valid
+    if length(param_locations) > d_y
+        error("The number of param_locations must be smaller than d_y")
+    end
+
+    n = length(param_locations) * d_x * p
+    l = length(param_locations)
+
+    arr = spzeros(n, d_x * (p * d_y + 1))
+    for (idx,loc) in enumerate(param_locations), x_pos in 1:d_x, p_pos in 1:p
+        arr[x_pos + (idx-1)*d_x + (p_pos-1)*d_x*l, d_x + d_x*(loc-1) + x_pos + (p_pos-1)*d_y] = 1.
+    end
+    return arr
+end
+
+
+"""
     create_y_traj(x_traj::Matrix{Float64};p_traj::Union{Matrix{Float64},Nothing}=nothing,h::Union{Function,Nothing}=nothing)
 
 This function creates a trajectory `y_traj` from `x_traj`, `p_traj` and `h` s.t. the i-th column of `y_traj` is given by
