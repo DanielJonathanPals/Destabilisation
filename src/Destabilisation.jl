@@ -39,8 +39,12 @@ export parameterSeriesGenerator
 export getParamLocations
 export testParamCausality
 
+export EOF
+export EOF_to_obs
+
 include("FormatTests.jl")
 include("VARmodel.jl")
 include("ParameterCalibration.jl")
+include("EOF.jl")
 
 end

@@ -10,4 +10,5 @@ using Test
     include("VARmodel.jl")
     include("TimeScales.jl")
     include("ParameterSeries.jl")
+    include("EOF.jl")
 end

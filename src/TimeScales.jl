@@ -179,7 +179,7 @@ function timeScale(DS::DynamicalSystem;
         error("T_max must be larger than T_init.")
     end
 
-    max_iter = Int64(ceil(log(T_max/T_init)/log(2)))
+    max_iter = Int64(ceil(log(T_max/T_init)/log(2)))+1
     T = T_init
     ts, err = 0., 0.
     for i in 1:max_iter

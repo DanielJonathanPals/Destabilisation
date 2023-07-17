@@ -37,10 +37,10 @@ using Polynomials
     DS = DynamicalSystem(prog,obs,v_init,p_init;random_vec_length=1)
 
     ts, err = timeScale(prog,v_init,p_init,random_vec_length=1)
-    @test ts ≈ 1.0192132 atol = 1e-5
-    @test err ≈ 0.00251419 atol = 1e-5
+    @test ts ≈ 1.019521301 atol = 1e-5
+    @test err ≈ 0.001792830 atol = 1e-5
 
     ts, err = timeScale(DS)
-    @test ts ≈ 1.0187814857 atol = 1e-5
-    @test err ≈ 0.00250293 atol = 1e-5
+    @test ts ≈ 1.0196729 atol = 1e-5
+    @test err ≈ 0.00180075 atol = 1e-5
 end

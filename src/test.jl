@@ -74,7 +74,9 @@ prog(v,p,r) = [-0.01*v[1]^3 + p[1]*v[1]^2 + 1.01*v[1] + p[2] + 1e-4*r[1]]
 obs(v,p) = v
 v_init = [-1.]
 p_init = [0.,0.]
-DS = DynamicalSystem(prog,obs,v_init,p_init;random_vec_length=1)
+vals, vecs = EOF(prog, v_init, p_init, random_vec_length=1)
+DS = DynamicalSystem(prog,obs,v_init,p_init,random_vec_length=1)
+timeScale(DS)
 p_traj = parameterSeriesGenerator(1/0.9,p_init,[1e-10,1e-10],n=1000, keep_const = 20)
 
 _,_,x_tr = integrateTraj(DS,1000)
