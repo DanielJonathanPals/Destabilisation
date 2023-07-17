@@ -69,23 +69,55 @@ Determines a proxy of the slowest timescale of the VAR model `model` by returnin
     one for the model to be stable) is returned.
     Note that this function can only be applied to VAR models without parameter variables and without hidden variables.
 """
-function timeScale(model::VARmodel)
+function timeScale(model::VARmodel; include_error = false)
 
-    # check that model has no parameter variables and no hidden variables
+    # check that the model is suitable for this function
     if model.d_p != 0
-        error("This function only works for VAR models without parameter variables")
+        error("This function can only be applied to VAR models without parameter variables.")
     end
     if model.d_h != 0
-        error("This function only works for VAR models without hidden variables")
+        error("This function can only be applied to VAR models without hidden variables.")
     end
+
+    if include_error == false
+        return timeScale(model.B_hat)
+    else
+        ts = timeScale(model.B_hat)
+        sqared_error_sum = 0.
+        λ, v = eigen(model.Σ_β_hat)
+        l = length(λ)
+        for i in 1:l
+            B_hat_plus = reshape(vec(model.B_hat) + √(λ[i]) .* v[:,i], size(model.B_hat))
+            B_hat_minus = reshape(vec(model.B_hat) - √(λ[i]) .* v[:,i], size(model.B_hat))
+            ts_plus = timeScale(B_hat_plus)
+            ts_minus = timeScale(B_hat_minus)
+            sqared_error_sum += max((ts_plus - ts)^2, (ts_minus - ts)^2)
+        end
+        return ts, sqrt(sqared_error_sum)
+    end
+end
+
+
+"""
+    timeScale(B_hat::Matrix{Float64})
+
+Auxiliary function that returns the timescale for a given matix `B_hat`
+"""
+function timeScale(B_hat::Matrix{Float64})
+    
+    # check that model has no parameter variables and no hidden variables
+    dx = size(B_hat,1)
+    p = (size(B_hat,2)-1)/dx
+    if p != floor(p)
+        error("The input matrix B_hat does not have the right dimensions.")
+    end
+    p = Int64(p)
 
     function f(z)
-        dx = model.d_x
-        B = model.B_hat
-        return det(Id(dx) - sum([z^i .* B[:,2+dx*(i-1):dx*i+1] for i in 1:model.p]))
+        return det(Id(dx) - sum([z^i .* B_hat[:,2+dx*(i-1):dx*i+1] for i in 1:p]))
     end
 
-    poly = toPolynomial(f,deg=model.d_x*model.p)
+    poly = toPolynomial(f,deg=dx*p)
 
     rts = roots(poly)
 
@@ -93,6 +125,73 @@ function timeScale(model::VARmodel)
 end
 
 
-function timeScale(DS::DynamicalSystem; T_init::Int64=200)
+"""
+    timeScale(progressor::Function, 
+                v_init::Vector{Float64}, 
+                p_init::Vector{Float64}; 
+                T_init::Int64 = 200,
+                T_max::Int64 = 10000,
+                rel_error::Float64 = 1e-1)
+
+Determines a proxy of the slowest timescale of the dynamical system defined by the progressor function
+    `progressor` with given initial state variables `v_init` and parameter variables `p_init`. 
+    This is done by integrating the dynamical system for a time `T_init` and then doubling the time until
+    the error on the time scale approximation is smaller than `rel_error * abs(ts - 1)`. The function then 
+    returns the time scale approximation and the error on the approximation.
+"""
+function timeScale(progressor::Function, 
+                    v_init::Vector{Float64}, 
+                    p_init::Vector{Float64};
+                    random_vec_length::Union{Int64,Nothing}=nothing, 
+                    T_init::Int64 = 200,
+                    T_max::Int64 = 10000,
+                    rel_error::Float64 = 1e-1)
     
+    obs(x,p) = x
+    DS = DynamicalSystem(progressor, obs, v_init, p_init, random_vec_length = random_vec_length)
+    return timeScale(DS, T_init = T_init, T_max = T_max, rel_error = rel_error)
+end
+
+
+"""
+    timeScale(progressor::Function, 
+                v_init::Vector{Float64}, 
+                p_init::Vector{Float64}; 
+                T_init::Int64 = 200,
+                T_max::Int64 = 10000,
+                rel_error::Float64 = 1e-1)
+
+Determines a proxy of the slowest timescale of the observable dynamics of the the dynamical systen `DS`. 
+    This is done by integrating the dynamical system for a time `T_init` and then doubling the time until
+    the error on the time scale approximation is smaller than `rel_error * abs(ts - 1)`. The function then 
+    returns the time scale approximation and the error on the approximation.
+"""
+function timeScale(DS::DynamicalSystem; 
+                    T_init::Int64 = 200,
+                    T_max::Int64 = 10000,
+                    rel_error::Float64 = 1e-1)
+
+    # check the input arguments
+    if T_init <= 0
+        error("T_init must be positive.")
+    end
+    if T_max <= T_init
+        error("T_max must be larger than T_init.")
+    end
+
+    max_iter = Int64(ceil(log(T_max/T_init)/log(2)))
+    T = T_init
+    ts, err = 0., 0.
+    for i in 1:max_iter
+        x_tr = integrateTraj(DS, T)[3]
+        p = VARorder(x_tr)
+        model = fitVARmodel(x_tr, p = p)
+        ts, err = timeScale(model, include_error = true)
+        if err < abs(ts - 1) * rel_error
+            return ts, err
+        end
+        T = 2*T
+    end
+    @warn "Could not determine timescale with relative error smaller than $(rel_error). For a higher accuracy, increase T_max."
+    return ts, err
 end

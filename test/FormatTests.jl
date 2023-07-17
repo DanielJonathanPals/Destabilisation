@@ -1,4 +1,5 @@
 using Kronecker
+using Random
 
 @testset "Format Tests" begin
     
@@ -10,27 +11,32 @@ using Kronecker
     @test check_traj(ones(Int64, 2, 3)) === nothing
     @test check_traj(ones(Float64, 3, 1)) === nothing
 
-    @test check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1) != 0
-    @test check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(-1.,2.)], 2, 1, 1) != 0
+    @test check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1, nothing) != 0
+    @test check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(-1.,2.)], 2, 1, 1, nothing) != 0
+    @test check_DynamicalSystem((x,p,r) -> x.^2 + 0.1 .* r, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1, 2) != 0
+    @test check_DynamicalSystem((x,p,r) -> x.^2 + r, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(-1.,2.)], 2, 1, 1, 2) != 0
+    @test check_DynamicalSystem((x,p,r) -> x.^2 + r[1] .* ones(2), (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(-1.,2.)], 2, 1, 1, 1) != 0
 
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 3, 1, 1)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 0, 1)
-    @test_throws ErrorException check_DynamicalSystem((x) -> x.^2, (x,p)-> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x[1], (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> [1.], (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> x[1]+p[1], [1.,3.], [0.], nothing, 2, 1, 1)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1],5.], [1.,3.], [0.], nothing, 2, 1, 1)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(-1.,2.),(-3.,5.)], 2, 1, 1)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(1.,2.)], 2, 1, 1)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 3, 1, 1, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 0, 1, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x) -> x.^2, (x,p)-> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x[1], (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> [1.], (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, 2, 1, 1, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> x[1]+p[1], [1.,3.], [0.], nothing, 2, 1, 1, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1],5.], [1.,3.], [0.], nothing, 2, 1, 1, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(-1.,2.),(-3.,5.)], 2, 1, 1, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(1.,2.)], 2, 1, 1, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p,r) -> x.^2 + r, (x,p) -> [x[1]+p[1]], [1.,3.], [1.5], [(1.,2.)], 2, 1, 1, 3)
 
-    @test_throws ErrorException check_DynamicalSystem((x) -> x.^2, (x,p)-> [x[1]+p[1]], [1.,3.], [0.], nothing)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x[1], (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> [1.], (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (p) -> [x[1]+p[1]], [1.,3.], [0.], nothing)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> x[1]+p[1], [1.,3.], [0.], nothing)
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(-1.,2.),(-3.,5.)])
-    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(1.,2.)])
+    @test_throws ErrorException check_DynamicalSystem((x) -> x.^2, (x,p)-> [x[1]+p[1]], [1.,3.], [0.], nothing, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x[1], (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> [1.], (x,p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (p) -> [x[1]+p[1]], [1.,3.], [0.], nothing, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> x[1]+p[1], [1.,3.], [0.], nothing, nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(-1.,2.),(-3.,5.)], nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [0.], [(1.,2.)], nothing)
+    @test_throws ErrorException check_DynamicalSystem((x,p) -> x.^2, (x,p) -> [x[1]+p[1]], [1.,3.], [1.5], [(1.,2.)], 3)
 
     @test check_h((x,p) -> reshape(Array(x ⊗  p), length(x ⊗  p)), ones(3,10), ones(2,10)) === nothing
     @test check_h((x) -> [x[1]], ones(3,10), nothing) === nothing

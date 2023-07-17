@@ -10,6 +10,7 @@ export F_i
 export F
 export C
 export create_y_traj
+export cut_traj
 
 export check_traj
 export check_DynamicalSystem

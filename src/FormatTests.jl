@@ -29,7 +29,7 @@ end
 
 Compatibility test for initialisation of an object of `DynamicalSystem`.
 """
-function check_DynamicalSystem(progressor,observable,v_init,p_init,p_bounds,v_length,p_length,x_length)
+function check_DynamicalSystem(progressor,observable,v_init,p_init,p_bounds,v_length,p_length,x_length,random_vec_length)
     # Check if length of x_init is compatible with x_length
     if length(v_init) != v_length
         error("`v_init` is incompatible with `v_length`, as `length(v_init)` = $(length(v_init)) and `v_length` = $v_length")
@@ -41,12 +41,22 @@ function check_DynamicalSystem(progressor,observable,v_init,p_init,p_bounds,v_le
     end
 
     # Test if the function 'progressor' has the correct form
-    try 
-        progressor(v_init,p_init)
-    catch
-        error("The function `progressor` is not of the correct form. It is supposed to take two vectors representing v and p as inputs and return v of type `Vector{Float64}` for the next timestep")
+    if random_vec_length === nothing
+        try 
+            progressor(v_init,p_init)
+        catch
+            error("The function `progressor` is not of the correct form. It is supposed to take two vectors representing v and p as inputs and return v of type `Vector{Float64}` for the next timestep")
+        end
+        v_1 = progressor(v_init,p_init)
+    else
+        r = randn(random_vec_length)
+        try 
+            progressor(v_init,p_init,r)
+        catch
+            error("The function `progressor` is not of the correct form. It is supposed to take three vectors representing v, p and a random vector as inputs and return v of type `Vector{Float64}` for the next timestep")
+        end
+        v_1 = progressor(v_init,p_init,r)
     end
-    v_1 = progressor(v_init,p_init)
     if typeof(v_1) != Vector{Float64}
         error("The output of the function `progressor must be of the type `Vector{Float64}`")
     end
@@ -87,19 +97,29 @@ end
 
 Compatibility test for initialisation of an object of `DynamicalSystem`.
 """
-function check_DynamicalSystem(progressor,observable,v_init,p_init,p_bounds)
+function check_DynamicalSystem(progressor,observable,v_init,p_init,p_bounds,random_vec_length)
     # Test if the function 'progressor' has the correct form
-    try 
-        progressor(v_init,p_init)
-    catch
-        error("The function `progressor` is not of the correct form. It is supposed to take two vectors representing v and p as inputs and return v of type `Vector{Float64}` for the next timestep")
+    if random_vec_length === nothing
+        try 
+            progressor(v_init,p_init)
+        catch
+            error("The function `progressor` is not of the correct form. It is supposed to take two vectors representing v and p as inputs and return v of type `Vector{Float64}` for the next timestep")
+        end
+        v_1 = progressor(v_init,p_init)
+    else
+        r = randn(random_vec_length)
+        try 
+            progressor(v_init,p_init,r)
+        catch
+            error("The function `progressor` is not of the correct form. It is supposed to take three vectors representing v, p and a random vector as inputs and return v of type `Vector{Float64}` for the next timestep")
+        end
+        v_1 = progressor(v_init,p_init,r)
     end
-    v_1 = progressor(v_init,p_init)
     if typeof(v_1) != Vector{Float64}
         error("The output of the function `progressor must be of the type `Vector{Float64}`")
     end
     if length(v_1) != length(v_init)
-        error("The output of the function in the argument `progressor` must have length given by `length(v_init)` = $(length(v_init))")
+        error("The output of the function in the argument `progressor` must have length given by `v_length` = $(length(v_init))")
     end
 
     # Test if the function 'observable' has the correct form

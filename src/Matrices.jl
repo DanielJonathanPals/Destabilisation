@@ -3,7 +3,10 @@
 using .FormatTests
 using LinearAlgebra
 using SparseArrays
+using Kronecker
 
+# Simple auxilary function to check whether there exists a natrual number n s.t. x = n*y 
+isDivisible(x,y) = (x == (length(collect(0:y:x))-1)*y)
 
 """
     slice_traj(data::Matrix; p::Int64=1, T::Int64=100)
@@ -87,6 +90,31 @@ function Y(traj; p::Int64=1, T::Union{Int64,Nothing}=nothing)
         arr[:,idx] = Y_t(traj, t, p=p)
     end
     return arr
+end
+
+
+"""
+    Y(x_traj::Matrix{Float64}, p_traj::Matrix{Float64}, p_init::Vector{Float64} , h::Function, p::Int64 = 1)
+
+Returns the matrix Y that is needed when performing a VAR regression where a reference trajectory is included.
+    Here Y is a matrix of size `(dp+dh*p) x (T-p)` where `T = size(x_traj, 2)`, `dp = size(p_traj, 1)` and
+    `dh = size(h(x_traj[:,1], p_init), 1)`. The function returns a matrix where the t-th column is given by
+    `Yₜ = [pₜ₊ₚ₋₁ - p_init; h(xₜ₊ₚ₋₁, pₜ₊ₚ₋₁ - p_init); ...; h(xₜ, pₜ - p_init)]` where `pₜ` is the t-th column of 
+    `p_traj` and `xₜ` is the t-th column of `x_traj`. 
+"""
+function Y(x_traj::Matrix{Float64}, p_traj::Matrix{Float64}, p_init::Vector{Float64} , h::Function; p::Int64 = 1)
+    dx,dp,dh = check_xph(x_traj,p_traj,h)
+    T = size(x_traj)[2]
+    if length(p_init) != dp
+        throw(ArgumentError("The length of the initial parameter vector `p_init` must be equal to the number of parameters in the trajectory `p_traj`"))
+    end
+    p_init_traj = repeat(p_init,1,T)
+    y_traj = create_y_traj(x_traj, p_traj = p_traj - p_init_traj, h = h)[dx+dp+1:end,:]
+    Y_arr = ones(Float64, dh*p + dp, T - p)
+    Y_arr[1:dp,:] = p_traj[:,p:end-1] - p_init_traj[:,p:end-1]
+    Y_arr[dp+1:end,:] = Y(y_traj, p = p)[2:end,:]
+
+    return Y_arr
 end
 
 
@@ -208,4 +236,31 @@ function create_y_traj(x_traj::Matrix;p_traj::Union{Matrix,Nothing}=nothing,h::U
         end
     end
     return y_traj
+end
+
+
+"""
+    cut_traj(traj::Matrix{Float64}, keep_const::Int64, cut_time_steps::Int64)
+
+This function devides a trajectory `traj` into pieces of length `keep_const` and removes `cut_time_steps` time 
+    steps from the beginning of each piece. The resulting trajectory is returned as a matrix.
+"""
+function cut_traj(traj::Matrix{Float64}, keep_const::Int64, cut_time_steps::Int64)
+    check_traj(traj)
+    traj = convert(Matrix{Float64}, traj)
+    n = size(traj)[2]
+    if !(isDivisible(n, keep_const))
+        throw(ArgumentError("The number of time steps must be divisible by keep_const"))
+    end
+    if cut_time_steps >= keep_const
+        throw(ArgumentError("The number of time steps to cut must be smaller than keep_const"))
+    end
+
+    # this is the result of n/keep_const
+    quot = length(collect(0:keep_const:n))-1
+    new_traj = zeros(Float64, size(traj)[1], n - quot*cut_time_steps)
+    for i in 1:quot
+        new_traj[:,(i-1)*(keep_const-cut_time_steps)+1:i*(keep_const-cut_time_steps)] = traj[:,(i-1)*keep_const+cut_time_steps+1:i*keep_const]
+    end
+    return new_traj
 end

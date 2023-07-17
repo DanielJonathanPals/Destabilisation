@@ -1,4 +1,5 @@
 using SparseArrays
+using Kronecker
 
 @testset "Matracies" begin
 
@@ -20,6 +21,18 @@ using SparseArrays
     @test Y(reshape(collect(1:20),2,10), p=2)[:,end] == [1.,17.,18.,15.,16.]
     @test_throws ErrorException Y(reshape(collect(1:20),2,10), p=2, T=7)
     @test_throws ErrorException Y(reshape(collect(1:20),2,10), p=2, T=9)
+
+    x_traj = Float64.(reshape(collect(1:20),2,10))
+    p_traj = Float64.(reshape(collect(1:3:30),1,10))
+    p_init = [-1.]
+    h(x::Vector,p::Vector) = reshape(Array(x ⊗ p), length(x)*length(p))
+
+    @test Y(x_traj, p_traj, p_init, h, p=2) == [5.0   8.0  11.0   14.0   17.0   20.0   23.0   26.0
+                                                15.0  40.0  77.0  126.0  187.0  260.0  345.0  442.0
+                                                20.0  48.0  88.0  140.0  204.0  280.0  368.0  468.0
+                                                2.0  15.0  40.0   77.0  126.0  187.0  260.0  345.0
+                                                4.0  20.0  48.0   88.0  140.0  204.0  280.0  368.0]
+    @test_throws ArgumentError Y(x_traj, p_traj, [-1.,1.], h, p=2)
 
     @test create_y_traj(reshape(collect(1:6),2,3), p_traj = ones(1,3), h = (x,p) -> reshape(Array(x ⊗  p), length(x ⊗  p))) == [1.0 3.0 5.0; 2.0 4.0 6.0; 1.0 1.0 1.0; 1.0 3.0 5.0; 2.0 4.0 6.0]
     @test create_y_traj(reshape(collect(1:6),2,3), p_traj = ones(1,3)) == [1.0 3.0 5.0; 2.0 4.0 6.0; 1.0 1.0 1.0]
@@ -58,4 +71,11 @@ using SparseArrays
                                         0.0  0.0  0.0  0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
                                         0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
                                         0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  1.0  0.0  0.0])
+
+    traj = Array((ones(1,3) ⊗  collect(1:20))')
+    @test cut_traj(traj, 10, 8) == [9.0  10.0  19.0  20.0
+                                    9.0  10.0  19.0  20.0
+                                    9.0  10.0  19.0  20.0]
+    @test_throws ArgumentError cut_traj(traj, 11, 8)
+    @test_throws ArgumentError cut_traj(traj, 4, 4)
 end
